@@ -1,1 +1,137 @@
-# starwars.github.io
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="shortcut icon" href="./img/star.png" type="image/png">
+    <title>Star Wars</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <!-- Mis estilos CSS -->
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    
+    <div class="container ">
+        <!-- titulo -->
+        <div class="row mt-3">
+            <h3><i class="fa-brands fa-galactic-republic"></i>Star Wars API</h3>
+            <p>Esta página extrae info de una api para darte datos de los personajes de Star Wars</p>
+        </div>
+        <!-- formulario -->
+        <form id="frmBuscar">
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <label class="label-control" for="personaje">Personaje:</label>
+                    <input class="form-control" type="text" name="personaje" id="personaje" placeholder="Teclea el nombre del personaje: Ej. Luke, Vader, Yoda, etc.">
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <button class="btn btn-sm btn-warning" id="btnBuscar"><i class="fa-solid fa-magnifying-glass"></i>Buscar</button>
+                    </div>
+            <div>
+
+        </form>
+        <!--contenido dinamico-->
+            <!--aqui se carga el contenido dinamicamente-->
+             <div class="row my-5">
+                <div id="resultado">
+                    <!--contenido-->
+
+
+                </div>
+                
+             </div>
+    </div>
+<!--programacion en javascript-->
+<script type="text/javascript">
+    //todo lo que yo poga adentro de la sig funcion es un listener y se carga al inicio del inicio del renderizado de la pagina
+    $(function(){
+        //evitar el comportamiento default del formulario
+        $("#frmBuscar").submit(function(e){
+            e.preventDefault();
+        })
+
+        //ocultamos la imagen al cagar
+        $("#foto").hide();
+
+        //le ponemos fecha al imput date que pide la api
+        
+        });
+        //ejecutar la busqueda cuando le demeos click al boton
+        $("#btnBuscar").click(function(){
+            cargardatos();
+        })
+    //funcion para cargar los datos de la api
+    function cargardatos(){
+        const nombre =$("#personaje").val().trim();
+        if(!nombre){
+            // asignamos a personaje el valor del input sin espacion, luego validamos que el persoanje no este vacio
+            $("#resultado").html("<p style=\"color:red;\">Por favor ingrese un personaje</p>");
+            return false;
+        }
+        //si esta correcto mostramos un menaje de carga
+        $("#resultado").html("<div class=\"loading\" >Cargando datos...</div>");
+
+        $.ajax({
+            url: `https://akabab.github.io/starwars-api/api/all.json`,
+            method: 'GET',
+            success:function(data){
+                //buscamos del array de objetos(data) que esta en la api el personaje que coincida con el nombre ingresado
+                const personaje = data.find(elemnto => elemnto.name.toLowerCase().includes(nombre.toLowerCase()));
+                if(personaje){
+                    $("#resultado").html(`
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">${personaje.name}</h2>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <p><Strong>Planeta de origen:</Strong> ${personaje.homeworld || "desconocido"} </p>
+                                    <p><Strong>Especie:</Strong> ${personaje.species || "desconocido"} </p>
+                                    <p><Strong>Altura:</Strong> ${personaje.height || "desconocido"} cm</p>
+                                    <p><Strong>Masa:</Strong> ${personaje.mass || "desconocido"} kg</p>
+                                    <p><Strong>Genero:</Strong> ${personaje.gender || "desconocido"} </p>
+                                    <p><Strong>Color de cabello:</Strong> ${personaje.hairColor || "desconocido"} </p>
+                                    <p><Strong>Color de ojos:</Strong> ${personaje.eyeColor || "desconocido"} </p>
+                                </div>
+                                <div class="col-md-5">
+                                    <img src="${personaje.image}" alt="${personaje.name}" class="img-fluid" style="max-height:250px; border-radius:20px; border:4px solid #ffc107; box-shadow:0 8px 20px rgba(0,0,0,0.3);" onerror="this.src='./img/star.png'">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    `)
+                    
+
+                }else {
+                    $("#resultado").html(`
+                    <p style="color:red;">
+                    Personaje "${nombre}" no encontrado.
+                    <br> Prueba con otro nombre, como "Luke Skywalker" o "Darth Vader".
+                    </p>
+                    `)
+                }
+            },
+            error:function(error){
+                $("#resultado").html("<p style=\"color:red;\">Error al cargar los datos. Intente nuevamente más tarde.</p>");
+                console.error("Error", error);
+
+            }
+        })
+
+    }
+</script>
+    
+</body>
+</html>
