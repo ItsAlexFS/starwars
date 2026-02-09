@@ -54,20 +54,16 @@
     </div>
 <!--programacion en javascript-->
 <script type="text/javascript">
-    //todo lo que yo poga adentro de la sig funcion es un listener y se carga al inicio del inicio del renderizado de la pagina
+    //listener que carga al inicial pag
     $(function(){
-        //evitar el comportamiento default del formulario
+        //evita el default form
         $("#frmBuscar").submit(function(e){
             e.preventDefault();
         })
-
-        //ocultamos la imagen al cagar
+        //hide img al cargar
         $("#foto").hide();
-
-        //le ponemos fecha al imput date que pide la api
-        
         });
-        //ejecutar la busqueda cuando le demeos click al boton
+        //ejecutar la busqueda
         $("#btnBuscar").click(function(){
             cargardatos();
         })
@@ -75,18 +71,18 @@
     function cargardatos(){
         const nombre =$("#personaje").val().trim();
         if(!nombre){
-            // asignamos a personaje el valor del input sin espacion, luego validamos que el persoanje no este vacio
+            // asignamos a personaje el valor del input no spaces y luego vemos si no esta empathy
             $("#resultado").html("<p style=\"color:red;\">Por favor ingrese un personaje</p>");
             return false;
         }
-        //si esta correcto mostramos un menaje de carga
+        //si es correcto msg de cargando
         $("#resultado").html("<div class=\"loading\" >Cargando datos...</div>");
 
         $.ajax({
             url: `https://akabab.github.io/starwars-api/api/all.json`,
             method: 'GET',
             success:function(data){
-                //buscamos del array de objetos(data) que esta en la api el personaje que coincida con el nombre ingresado
+                //buscamos el personaje en el array que arroja la api
                 const personaje = data.find(elemnto => elemnto.name.toLowerCase().includes(nombre.toLowerCase()));
                 if(personaje){
                     $("#resultado").html(`
